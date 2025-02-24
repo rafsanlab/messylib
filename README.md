@@ -1,2 +1,2 @@
-# messy-lib
-General codes (mostly python) use for other projects. 
+# messylib
+General codes (mostly python) use for any projects needed.
