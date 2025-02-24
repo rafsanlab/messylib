@@ -3,7 +3,7 @@ from natsort import natsorted
 
 # --------------------------------------------------------------------
 
-def get_paths_ftype(
+def get_paths_filetype(
       target_path:str,
       filetype:str,
       exclude_hidden:bool=True,
