@@ -4,7 +4,7 @@ from natsort import natsorted
 # --------------------------------------------------------------------
 
 
-def get_paths_filetype(
+def get_filepaths_bytype(
     target_path: str,
     filetype: str,
     exclude_hidden: bool = True,
