@@ -129,7 +129,7 @@ def plot_images_from_list(
     cols: int = 5,
     figsize: Tuple[int, int] = (15, 15),
     title_size: int = 10,
-    cmap: str = 'binary',
+    cmap: str|None = None,
     cmap_reverse: bool = False,
     savedir: Optional[str] = None,
     save_dpi: int = 200,
@@ -170,11 +170,14 @@ def plot_images_from_list(
                 img_path = to_plot_file_paths[idx]
                 img = mpimg.imread(img_path)
 
-                cmap_obj = plt.colormaps.get_cmap(cmap)
-                if cmap_reverse:
-                    cmap_obj = cmap_obj.reversed()
-
-                ax.imshow(img, cmap=cmap_obj)
+                if cmap is not None:
+                    cmap_obj = plt.colormaps.get_cmap(cmap)
+                    if cmap_reverse:
+                        cmap_obj = cmap_obj.reversed()
+                    ax.imshow(img, cmap=cmap_obj)
+                else:
+                    ax.imshow(img)
+                    
                 ax.set_title(os.path.basename(img_path), fontsize=title_size)
                 ax.axis('off')
             else:
