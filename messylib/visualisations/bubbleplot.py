@@ -2,15 +2,17 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+
 def plot_bubble(
     df: pd.DataFrame,
     groupby: list,
     x_col,
     y_col,
-    hue_col = None,
-    figsize: tuple = (15,3),
+    hue_col=None,
+    sort_col=None,
+    figsize: tuple = (15, 3),
     sns_style: str = "darkgrid",
-    palette = "rocket_r",
+    palette="rocket_r",
     sizes: tuple = (50, 500),
     alpha: float = 0.8,
     xlabel: str = None,
@@ -18,12 +20,14 @@ def plot_bubble(
     title: str = None,
     xrotate: int = 90,
     tight_layout: bool = False,
-    savepath = None,
+    savepath=None,
     showplot: bool = True,
-
-    ):
+):
 
     bubble_df = df.groupby(groupby).size().reset_index(name="Count")
+    if sort_col is not None:
+        bubble_df = bubble_df.sort_values(by=sort_col).reset_index()
+
     plt.figure(figsize=figsize)
     sns.set_theme()
     sns.set_style(sns_style)
