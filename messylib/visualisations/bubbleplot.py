@@ -19,6 +19,7 @@ def plot_bubble(
     ylabel: str = None,
     title: str = None,
     xrotate: int = 90,
+    subplots_adjust: dict = {"left":0.05},
     tight_layout: bool = False,
     savepath=None,
     showplot: bool = True,
@@ -52,6 +53,8 @@ def plot_bubble(
     y_min, y_max = ax.get_ylim()
     ax.set_xlim(x_min + 0, x_max + 0)
     ax.set_ylim(y_min + 0.2, y_max - 0.2)
+    if subplots_adjust:
+        plt.subplots_adjust(**subplots_adjust)
 
     # Improve appearance
     plt.xticks(rotation=xrotate)
