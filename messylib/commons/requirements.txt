@@ -1,1 +1,3 @@
 natsort
+psutil
+pympler
