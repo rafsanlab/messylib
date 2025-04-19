@@ -19,6 +19,7 @@ def sizeof(var, name=None, deep=False):
     Parameters:
     - var: The variable to inspect
     - name: Optional name to display
+    - deep: If True, calculate deep memory with pympler (slower but accurate)
     """
     label = name or repr(var)[:30]
     if deep:
