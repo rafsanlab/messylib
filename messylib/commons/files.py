@@ -28,3 +28,13 @@ def get_filepaths_bytype(
 
 
 # --------------------------------------------------------------------
+
+
+def create_filedict(pathlist: list, filetype: str) -> dict:
+    """Collect files into filesdict and returns filesdict."""
+    filesdict = {}
+    for path in pathlist:
+        fname = os.path.basename(path)
+        fid = fname.split(filetype)[0]
+        filesdict[fid] = path
+    return filesdict
