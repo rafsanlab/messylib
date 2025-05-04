@@ -2,7 +2,7 @@
 
 import os
 
-currentdir = os.getcwd()
+currentdir = os.path.dirname(os.path.abspath(__file__))
 moduledir = os.path.join(currentdir, "messylib")
 
 submodules = [
