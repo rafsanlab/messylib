@@ -2,7 +2,8 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from typing import Sequence
-
+import numpy as np
+import matplotlib.ticker as ticker
 
 def plot_df_cols(
     df: pd.DataFrame,
@@ -28,7 +29,7 @@ def plot_df_cols(
     marker_size: float = 5.0,
     show_grid: bool = True,
     highlight_spines: Sequence[str] = (),  # e.g., ["left", "bottom"]
-    highlight_spines_dict: dict = {"linewidth": 1.5, "color": "black"},
+    highlight_spines_dict: dict = {"linewidth": 1, "color": "black"},
 ) -> None:
     """
     Plots training and validation metrics from a pandas DataFrame using seaborn.
@@ -159,6 +160,32 @@ def plot_df_cols(
         if spine in ax.spines:
             ax.spines[spine].set_linewidth(highlight_spines_dict["linewidth"])
             ax.spines[spine].set_color(highlight_spines_dict["color"])
+
+        # This is the crucial line for ticks:
+    ax.tick_params(
+        bottom="on",
+        left="on",
+        axis="both",
+        direction="out",
+        length=5,
+        width=1,
+        colors="black",
+    )
+    ax.tick_params(axis="x", labelsize=xlabel_fontsize)  # Set fontsize for x-axis ticks
+    ax.tick_params(axis="y", labelsize=ylabel_fontsize)
+
+    # adjust grids for both major and minor
+    plt.grid(True)
+    ax.grid(True, which="major", axis="both", linestyle="-", linewidth=0.5)
+    ax.grid(True, which="minor", axis="both", linestyle=":", linewidth=0.5)
+
+    # Adjust the frequency of minor ticks
+    ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
+    ax.yaxis.set_minor_locator(ticker.AutoMinorLocator())
+
+    # These lines ensure ticks are placed at 0.1 intervals:
+    # ax.set_xticks(np.arange(0, 1.1, 0.2))
+    # ax.set_yticks(np.arange(0, 1.1, 0.2))
 
     if legend_outside:
         plt.legend(bbox_to_anchor=(1.05, 1), loc="upper left")
