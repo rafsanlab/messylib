@@ -5,6 +5,7 @@ from typing import Sequence
 import numpy as np
 import matplotlib.ticker as ticker
 
+
 def plot_df_cols(
     df: pd.DataFrame,
     x: str | None = None,
@@ -192,6 +193,136 @@ def plot_df_cols(
         plt.tight_layout(rect=[0, 0, 0.85, 1])
     else:
         plt.legend()
+        plt.tight_layout()
+
+    if savedir:
+        plt.savefig(savedir, bbox_inches="tight")
+
+    if show_plot:
+        plt.show()
+    else:
+        plt.close()
+
+
+# ==============================================================================
+
+
+def boxplot_df_cols(
+    df: pd.DataFrame,
+    x: str,
+    y_cols: Sequence[str],
+    hue: str | None = None,
+    colors: list[str] | str | None = None,
+    xlabel: str | None = None,
+    ylabel: str | None = None,
+    title: str | None = None,
+    figsize: tuple[int, int] = (10, 6),
+    legend_outside: bool = False,
+    show_plot: bool = True,
+    seaborn_style: str | None = "whitegrid",
+    savedir: str | None = None,
+    title_fontsize: int = 14,
+    xlabel_fontsize: int = 12,
+    ylabel_fontsize: int = 12,
+    remove_spines: Sequence[str] | None = None,
+    y_lim: float | tuple[float, float] | None = None,
+    show_grid: bool = True,
+    highlight_spines: Sequence[str] = (),
+    highlight_spines_dict: dict = {"linewidth": 1, "color": "black"},
+    showfliers: bool = True,
+) -> None:
+    """
+    Plots boxplots (with optional subgroups) of specified DataFrame columns.
+
+    Args:
+        df : pd.DataFrame
+            DataFrame containing the data.
+        x : str
+            Main categorical variable on the x-axis.
+        y_cols : Sequence[str]
+            Columns to plot as boxplots (melted and grouped by 'Metric').
+        hue : str | None
+            Optional subgroup within each x-category (e.g., for subgroups).
+        showfliers : bool
+            Whether to show outlier dots.
+        ... (same as before)
+    """
+    plot_df = df.copy()
+
+    # Melt data so all metrics go into a single 'Metric' column
+    id_vars = [x]
+    if hue:
+        id_vars.append(hue)
+
+    melted_df = plot_df.melt(
+        id_vars=id_vars, value_vars=y_cols, var_name="Metric", value_name="Value"
+    )
+
+    plt.figure(figsize=figsize)
+    if seaborn_style:
+        sns.set(style=seaborn_style)
+
+    palette = None
+    if isinstance(colors, list):
+        palette = colors
+    elif isinstance(colors, str):
+        palette = sns.color_palette(colors, n_colors=len(y_cols))
+
+    ax = sns.boxplot(
+        data=melted_df,
+        x=x,
+        y="Value",
+        hue=hue if hue else "Metric",
+        palette=palette,
+        showfliers=showfliers,
+    )
+
+    ax.set_xlabel(xlabel if xlabel else x, fontsize=xlabel_fontsize)
+    ax.set_ylabel(ylabel if ylabel else "Value", fontsize=ylabel_fontsize)
+
+    if title:
+        ax.set_title(title, fontsize=title_fontsize)
+
+    if y_lim is not None:
+        if isinstance(y_lim, tuple):
+            ax.set_ylim(y_lim)
+        else:
+            ax.set_ylim((0, y_lim))
+
+    if not show_grid:
+        ax.grid(False)
+
+    if remove_spines:
+        for spine in remove_spines:
+            ax.spines[spine].set_visible(False)
+
+    for spine in highlight_spines:
+        if spine in ax.spines:
+            ax.spines[spine].set_linewidth(highlight_spines_dict["linewidth"])
+            ax.spines[spine].set_color(highlight_spines_dict["color"])
+
+    ax.tick_params(
+        bottom="on",
+        left="on",
+        axis="both",
+        direction="out",
+        length=5,
+        width=1,
+        colors="black",
+    )
+    ax.tick_params(axis="x", labelsize=xlabel_fontsize)
+    ax.tick_params(axis="y", labelsize=ylabel_fontsize)
+
+    ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
+    ax.yaxis.set_minor_locator(ticker.AutoMinorLocator())
+
+    if legend_outside:
+        plt.legend(
+            bbox_to_anchor=(1.05, 1), loc="upper left", title=hue if hue else "Metric"
+        )
+        plt.tight_layout(rect=[0, 0, 0.85, 1])
+    else:
+        plt.legend(title=hue if hue else "Metric")
         plt.tight_layout()
 
     if savedir:
