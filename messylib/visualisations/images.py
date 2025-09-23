@@ -238,7 +238,7 @@ def plot_patches(
     cmap: Optional[str] = None,
     cmap_reverse: bool = False,
     savedir: Optional[str] = None,
-    save_fname: str = "image_patches.png",
+    save_fname: str = None,
     save_dpi: int = 200,
     show_plot: bool = True,
     verbose: bool = True,
