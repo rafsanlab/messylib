@@ -223,3 +223,109 @@ def plot_images_from_list(
             plt.show()
 
         plt.close(fig)
+
+# ====================================================================
+# ====================================================================
+
+def plot_patches(
+    patches: List[np.ndarray],
+    nrows: int,
+    ncols: int,
+    figsize: Tuple[int, int] = (10, 8),
+    set_title: bool = False,
+    title_list: Optional[List[str]] = None,
+    title_size: int = 10,
+    cmap: Optional[str] = None,
+    cmap_reverse: bool = False,
+    savedir: Optional[str] = None,
+    save_fname: str = "image_patches.png",
+    save_dpi: int = 200,
+    show_plot: bool = True,
+    verbose: bool = True,
+) -> None:
+    """
+    Plots a list of image patches on a grid with options for customisation and saving.
+
+    Args:
+        patches (List[np.ndarray]): A list of patches as NumPy arrays.
+        nrows (int): The number of rows in the plot grid.
+        ncols (int): The number of columns in the plot grid.
+        figsize (Tuple[int, int]): The overall size of the figure.
+        set_title (bool): If True, a title is set for each patch.
+        title_list (Optional[List[str]]): A list of custom titles for the patches.
+        title_size (int): Font size for the titles.
+        cmap (Optional[str]): Colormap to use for displaying images.
+        cmap_reverse (bool): If True, use the reversed version of the colormap.
+        savedir (Optional[str]): Directory to save the plot. If None, the plot is not saved.
+        save_fname (str): Filename for the saved plot.
+        save_dpi (int): Dots per inch (DPI) for the saved figure.
+        show_plot (bool): If True, display the plot interactively.
+        verbose (bool): If True, print status messages.
+    """
+    if not patches:
+        if verbose:
+            print("The 'patches' list is empty. Nothing to plot.")
+        return
+
+    if verbose:
+        print(f"Plotting {len(patches)} patches on a {nrows}x{ncols} grid...")
+
+    fig, axes = plt.subplots(nrows, ncols, figsize=figsize)
+    # Robustly handle axes array for all grid sizes (1x1, 1xN, Nx1, NxM)
+    axes = np.atleast_1d(axes).flatten()
+
+    num_subplots = len(axes)
+    num_patches = len(patches)
+
+    if num_patches > num_subplots and verbose:
+        print(f"Warning: More patches ({num_patches}) than subplots ({num_subplots}). "
+              f"Only the first {num_subplots} will be plotted.")
+
+    for i, patch in enumerate(patches):
+        if i >= num_subplots:
+            break
+        
+        ax = axes[i]
+
+        # Handle colormap settings
+        imshow_args = {}
+        if cmap:
+            try:
+                cmap_obj = plt.colormaps.get_cmap(cmap)
+                if cmap_reverse:
+                    cmap_obj = cmap_obj.reversed()
+                imshow_args['cmap'] = cmap_obj
+            except ValueError:
+                if verbose:
+                    print(f"Warning: Colormap '{cmap}' not found. Using default.")
+
+        ax.imshow(patch, **imshow_args)
+        ax.axis('off')
+
+        # Set title if requested
+        if set_title:
+            if title_list and i < len(title_list):
+                ax.set_title(title_list[i], fontsize=title_size)
+            else:
+                ax.set_title(f"Patch {i}", fontsize=title_size)
+
+    # Hide any unused subplots
+    for j in range(num_patches, num_subplots):
+        axes[j].axis('off')
+
+    plt.tight_layout()
+
+    # Save the figure if a directory is provided
+    if savedir:
+        os.makedirs(savedir, exist_ok=True)
+        save_path = os.path.join(savedir, save_fname)
+        plt.savefig(save_path, dpi=save_dpi, bbox_inches='tight')
+        if verbose:
+            print(f"Plot saved to {save_path}")
+
+    # Show the plot if requested
+    if show_plot:
+        plt.show()
+    
+    # Close the figure to free up memory
+    plt.close(fig)
