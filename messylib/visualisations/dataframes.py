@@ -274,6 +274,7 @@ def boxplot_df_cols(
     show_legend: bool = True, # Added show_legend
     save_dpi: int = 150, # Added save_dpi
     x_tick_rotation: float = 0, # <-- NEW
+    box_linewidth: float = 1.5,
 ) -> None:
     """
     Plots boxplots (with optional subgroups) of specified DataFrame columns.
@@ -374,6 +375,7 @@ def boxplot_df_cols(
         hue=hue if hue else "Metric", # Use 'Metric' as hue if no specific hue is provided
         palette=palette,
         showfliers=showfliers,
+        linewidth=box_linewidth,
     )
 
     # Set axis labels and title
