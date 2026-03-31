@@ -33,6 +33,7 @@ def plot_df_cols(
     highlight_spines_dict: dict = {"linewidth": 1, "color": "black"},
     show_legend: bool = True,
     save_dpi: int = 150,
+    x_tick_rotation: float = 0,  # <-- NEW
 ) -> None:
     """
     Plots training and validation metrics from a pandas DataFrame using seaborn.
@@ -100,7 +101,9 @@ def plot_df_cols(
             Whether to display the legend. Defaults to True.
         save_dpi : int
             DPI (dots per inch) for saving the figure. Defaults to 150.
-
+        x_tick_rotation : float
+            Angle to rotate the x-axis tick labels. Defaults to 0.
+            
     Returns:
         None
     """
@@ -197,7 +200,18 @@ def plot_df_cols(
         width=1,
         colors="black", # Explicitly set tick color
     )
+    # <-- UPDATED: Added labelrotation here
     ax.tick_params(axis="x", labelsize=xlabel_fontsize)
+    
+    # Rotate and align x-axis labels from the end
+    if x_tick_rotation != 0:
+        plt.setp(
+            ax.get_xticklabels(), 
+            rotation=x_tick_rotation, 
+            ha="right", 
+            rotation_mode="anchor"
+        )
+
     ax.tick_params(axis="y", labelsize=ylabel_fontsize)
 
 
@@ -259,6 +273,7 @@ def boxplot_df_cols(
     showfliers: bool = True,
     show_legend: bool = True, # Added show_legend
     save_dpi: int = 150, # Added save_dpi
+    x_tick_rotation: float = 0, # <-- NEW
 ) -> None:
     """
     Plots boxplots (with optional subgroups) of specified DataFrame columns.
@@ -312,6 +327,8 @@ def boxplot_df_cols(
             Whether to display the legend. Defaults to True.
         save_dpi : int
             DPI (dots per inch) for saving the figure. Defaults to 150.
+        x_tick_rotation : float
+            Angle to rotate the x-axis tick labels. Defaults to 0.
 
     Returns:
         None
@@ -403,7 +420,17 @@ def boxplot_df_cols(
         width=1,
         colors="black",
     )
+    # <-- UPDATED: Added labelrotation here
     ax.tick_params(axis="x", labelsize=xlabel_fontsize)
+    
+    # Rotate and align x-axis labels from the end
+    if x_tick_rotation != 0:
+        plt.setp(
+            ax.get_xticklabels(), 
+            rotation=x_tick_rotation, 
+            ha="right", 
+            rotation_mode="anchor"
+        )
     ax.tick_params(axis="y", labelsize=ylabel_fontsize)
 
     # Adjust the frequency of minor ticks (usually more relevant for y-axis in boxplots)
@@ -446,3 +473,4 @@ def boxplot_df_cols(
         plt.show()
     else:
         plt.close()
+        
