@@ -253,7 +253,7 @@ def boxplot_df_cols(
     x: str,
     y_cols: Sequence[str],
     hue: str | None = None,
-    colors: list[str] | str | None = None,
+    colors: list[str] | str | dict | None = None,
     xlabel: str | None = None,
     ylabel: str | None = None,
     title: str | None = None,
@@ -338,7 +338,7 @@ def boxplot_df_cols(
 
     # Melt data so all metrics go into a single 'Metric' column
     id_vars = [x]
-    if hue:
+    if hue and hue != x:  # <-- FIX: Only append if hue is different from x
         id_vars.append(hue)
 
     melted_df = plot_df.melt(
@@ -473,4 +473,3 @@ def boxplot_df_cols(
         plt.show()
     else:
         plt.close()
-        
