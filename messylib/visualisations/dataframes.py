@@ -159,6 +159,8 @@ def boxplot_df_cols(
     title: str | None = None,
     figsize: tuple[int, int] = (10, 6),
     legend_outside: bool = False,
+    legend_outside_pos: str = "right",
+    legend_ncol: int = 1,
     show_plot: bool = True,
     seaborn_style: str | None = "whitegrid",
     savedir: str | None = None,
@@ -200,6 +202,10 @@ def boxplot_df_cols(
             Size of the figure in inches.
         legend_outside : bool
             Whether to place the legend outside the plot area.
+        legend_outside_pos : str
+            Where to place the external legend. Options: "top", "bottom", "left", "right".
+        legend_ncol : int
+            Number of columns for the legend. Defaults to 1.
         show_plot : bool
             Whether to display the plot with plt.show().
         seaborn_style : str | None
@@ -344,19 +350,27 @@ def boxplot_df_cols(
         legend_title = None
         if hue:
             legend_title = hue
-        elif len(y_cols) > 1 : # Only show legend if there are multiple metrics when hue is not used
+        elif len(y_cols) > 1 : 
              legend_title = "Metric"
 
-        if legend_title: # Proceed only if there's something to show in legend
+        if legend_title: 
             if legend_outside:
-                plt.legend(
-                    bbox_to_anchor=(1.05, 1), loc="upper left", title=legend_title
-                )
-                plt.tight_layout(rect=[0, 0, 0.85, 1])
+                if legend_outside_pos == "right":
+                    plt.legend(bbox_to_anchor=(1.05, 1), loc="upper left", title=legend_title, ncol=legend_ncol)
+                    plt.tight_layout(rect=[0, 0, 0.85, 1])
+                elif legend_outside_pos == "left":
+                    plt.legend(bbox_to_anchor=(-0.05, 1), loc="upper right", title=legend_title, ncol=legend_ncol)
+                    plt.tight_layout()
+                elif legend_outside_pos == "top":
+                    plt.legend(bbox_to_anchor=(0.5, 1.15), loc="lower center", title=legend_title, ncol=legend_ncol)
+                    plt.tight_layout()
+                elif legend_outside_pos == "bottom":
+                    plt.legend(bbox_to_anchor=(0.5, -0.2), loc="upper center", title=legend_title, ncol=legend_ncol)
+                    plt.tight_layout()
             else:
-                plt.legend(title=legend_title)
+                plt.legend(title=legend_title, ncol=legend_ncol)
                 plt.tight_layout()
-        else: # No legend needed (e.g. single y_col and no hue)
+        else: 
             if ax.get_legend() is not None:
                 ax.get_legend().remove()
             plt.tight_layout()
